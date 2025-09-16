@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Система подбора фильмов</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+
+<div class="container py-4">
+    <header class="mb-4">
+        <h1 class="h3">🎬 Система подбора фильмов</h1>
+        <p class="text-muted">Ответьте на вопросы о ваших предпочтениях и получите персонализированные рекомендации</p>
+        <a th:href="@{/movies/all}" class="btn btn-outline-secondary btn-sm">К списку всех фильмов</a>
+    </header>
+
+    <form th:action="@{/movies/recommend}" method="post" th:object="${preferences}" class="bg-white p-4 rounded shadow-sm">
+        <!-- Платформы -->
+        <div class="mb-3">
+            <h5>Платформы для просмотра</h5>
+            <div class="row row-cols-2 row-cols-md-3">
+                <div class="form-check" th:each="platform : ${platforms}">
+                    <input class="form-check-input" type="checkbox" th:field="*{platforms}" th:value="${platform}">
+                    <label class="form-check-label" th:text="${platform}"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Жанры -->
+        <div class="mb-3">
+            <h5>Любимые жанры</h5>
+            <div class="row row-cols-2 row-cols-md-3">
+                <div class="form-check" th:each="genre : ${genres}">
+                    <input class="form-check-input" type="checkbox" th:field="*{genres}" th:value="${genre}">
+                    <label class="form-check-label" th:text="${genre}"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Сеттинги -->
+        <div class="mb-3">
+            <h5>Предпочтительные сеттинги</h5>
+            <div class="row row-cols-2 row-cols-md-3">
+                <div class="form-check" th:each="setting : ${settings}">
+                    <input class="form-check-input" type="checkbox" th:field="*{settings}" th:value="${setting}">
+                    <label class="form-check-label" th:text="${setting}"></label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Возрастной рейтинг -->
+        <div class="mb-3">
+            <h5>Возрастной рейтинг</h5>
+            <select th:field="*{rating}" class="form-select">
+                <option value="">Любой рейтинг</option>
+                <option value="G">G - Для всех возрастов</option>
+                <option value="PG">PG - Детям с родителями</option>
+                <option value="PG-13">PG-13 - От 13 лет</option>
+                <option value="R">R - От 17 лет</option>
+                <option value="NC-17">NC-17 - Только взрослые</option>
+            </select>
+        </div>
+
+        <!-- Годы -->
+        <div class="mb-3">
+            <h5>Годы выпуска</h5>
+            <div class="row g-2">
+                <div class="col">
+                    <label class="form-label">От:</label>
+                    <input type="number" class="form-control" th:field="*{minYear}" min="1900" max="2024" value="1990">
+                </div>
+                <div class="col">
+                    <label class="form-label">До:</label>
+                    <input type="number" class="form-control" th:field="*{maxYear}" min="1900" max="2024" value="2024">
+                </div>
+            </div>
+        </div>
+
+        <!-- Минимальный рейтинг -->
+        <div class="mb-3">
+            <h5>Минимальный рейтинг IMDB</h5>
+            <input type="range" th:field="*{minRating}" min="0" max="10" step="0.1" value="7.0" class="form-range"
+                   oninput="document.getElementById('ratingValue').textContent = this.value">
+            <span id="ratingValue" th:text="*{minRating}">7.0</span>
+        </div>
+
+        <!-- Тип просмотра -->
+        <div class="mb-3">
+            <h5>Тип просмотра</h5>
+            <div class="row row-cols-2 row-cols-md-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{movieTypes}" value="Одиночный просмотр">
+                    <label class="form-check-label">Одиночный просмотр</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{movieTypes}" value="С друзьями">
+                    <label class="form-check-label">С друзьями</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{movieTypes}" value="С семьей">
+                    <label class="form-check-label">С семьей</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{movieTypes}" value="С детьми">
+                    <label class="form-check-label">С детьми</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{movieTypes}" value="С партнером">
+                    <label class="form-check-label">С партнером</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" th:field="*{movieTypes}" value="Для размышлений">
+                    <label class="form-check-label">Для размышлений</label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Длительность -->
+        <div class="mb-4">
+            <h5>Длительность фильма</h5>
+            <select th:field="*{duration}" class="form-select">
+                <option value="">Любая длительность</option>
+                <option value="Короткий (1.5 часа)">Короткий (до 1.5 часа)</option>
+                <option value="Средний (2 часа)">Средний (около 2 часов)</option>
+                <option value="Длинный (2.5+ часа)">Длинный (2.5+ часа)</option>
+                <option value="Очень длинный (3+ часа)">Очень длинный (3+ часа)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-100">🎯 Найти подходящие фильмы</button>
+    </form>
+</div>
+
+</body>
+</html>
