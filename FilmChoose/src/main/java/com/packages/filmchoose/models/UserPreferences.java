@@ -16,4 +16,10 @@ public class UserPreferences {
     private Integer minYear;
     private Integer maxYear;
     private Double minRating;
+    private Boolean happyEnding;
+    private Boolean famousActors;
+    private Boolean epicScenes;
+    private Boolean basedOnTrueStory;
+    private Boolean goodMusic;
+    private Boolean plotTwists;
 }

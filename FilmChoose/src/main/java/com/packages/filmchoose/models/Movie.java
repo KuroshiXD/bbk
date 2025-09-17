@@ -17,5 +17,5 @@ public class Movie {
     private String graphics;
     private Integer year;
     private String director;
-    private Double imdbRating;
+    private Double viewerRating;
 }
