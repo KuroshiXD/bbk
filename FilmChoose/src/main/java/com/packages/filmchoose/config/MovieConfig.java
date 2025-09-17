@@ -28,7 +28,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2023);
                     setDirector("Чад Стахелски");
-                    setImdbRating(8.2);
+                    setViewerRating(8.2); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -44,7 +44,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2023);
                     setDirector("Кристофер Маккуорри");
-                    setImdbRating(8.1);
+                    setViewerRating(8.1); // Заменено с imdbRating
                 }},
 
                 // === МАРВЕЛ (СУПЕРГЕРОИ) ===
@@ -61,7 +61,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2019);
                     setDirector("Руссо");
-                    setImdbRating(8.4);
+                    setViewerRating(8.4); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -77,7 +77,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2019);
                     setDirector("Джон Уоттс");
-                    setImdbRating(8.1);
+                    setViewerRating(8.1); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -93,7 +93,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2008);
                     setDirector("Джон Фавро");
-                    setImdbRating(7.9);
+                    setViewerRating(7.9); // Заменено с imdbRating
                 }},
 
                 // === ЗВЁЗДНЫЕ ВОЙНЫ (КОСМИЧЕСКАЯ ОПЕРА) ===
@@ -110,7 +110,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(1977);
                     setDirector("Джордж Лукас");
-                    setImdbRating(8.6);
+                    setViewerRating(8.6); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -126,7 +126,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2019);
                     setDirector("Райан Джонсон");
-                    setImdbRating(6.9);
+                    setViewerRating(6.9); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -142,7 +142,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2016);
                     setDirector("Гарет Эдвардс");
-                    setImdbRating(7.8);
+                    setViewerRating(7.8); // Заменено с imdbRating
                 }},
 
                 // === ФЭНТЕЗИ ===
@@ -159,7 +159,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2001);
                     setDirector("Питер Джексон");
-                    setImdbRating(8.8);
+                    setViewerRating(8.8); // Заменено с imdbRating
                 }},
 
                 // === НАУЧНАЯ ФАНТАСТИКА ===
@@ -176,7 +176,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2014);
                     setDirector("Кристофер Нолан");
-                    setImdbRating(8.6);
+                    setViewerRating(8.6); // Заменено с imdbRating
                 }},
 
                 // === ДРАМЫ ===
@@ -193,7 +193,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2018);
                     setDirector("Питер Фаррелли");
-                    setImdbRating(8.2);
+                    setViewerRating(8.2); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -209,7 +209,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(1994);
                     setDirector("Роберт Земекис");
-                    setImdbRating(8.8);
+                    setViewerRating(8.8); // Заменено с imdbRating
                 }},
 
                 // === КОМЕДИИ ===
@@ -226,7 +226,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2009);
                     setDirector("Тодд Филлипс");
-                    setImdbRating(7.7);
+                    setViewerRating(7.7); // Заменено с imdbRating
                 }},
 
                 // === УЖАСЫ ===
@@ -243,7 +243,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2017);
                     setDirector("Джордан Пил");
-                    setImdbRating(7.7);
+                    setViewerRating(7.7); // Заменено с imdbRating
                 }},
 
                 // === РОМАНТИКА ===
@@ -260,7 +260,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(1997);
                     setDirector("Джеймс Кэмерон");
-                    setImdbRating(7.9);
+                    setViewerRating(7.9); // Заменено с imdbRating
                 }},
 
                 // === АНИМАЦИЯ ===
@@ -277,7 +277,7 @@ public class MovieConfig {
                     setGraphics("Анимационная");
                     setYear(2017);
                     setDirector("Ли Анкрич");
-                    setImdbRating(8.4);
+                    setViewerRating(8.4); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -293,7 +293,7 @@ public class MovieConfig {
                     setGraphics("Анимационная");
                     setYear(1994);
                     setDirector("Роджер Аллерс");
-                    setImdbRating(8.5);
+                    setViewerRating(8.5); // Заменено с imdbRating
                 }},
 
                 // === ДОКУМЕНТАЛЬНЫЕ ===
@@ -310,7 +310,7 @@ public class MovieConfig {
                     setGraphics("Документальная");
                     setYear(2019);
                     setDirector("Альберт Хьюз");
-                    setImdbRating(9.3);
+                    setViewerRating(9.3); // Заменено с imdbRating
                 }},
 
                 // === ТРИЛЛЕРЫ ===
@@ -327,7 +327,7 @@ public class MovieConfig {
                     setGraphics("Реалистичная");
                     setYear(2015);
                     setDirector("Адам МакКей");
-                    setImdbRating(7.8);
+                    setViewerRating(7.8); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -343,7 +343,7 @@ public class MovieConfig {
                     setGraphics("Мрачная");
                     setYear(1995);
                     setDirector("Дэвид Финчер");
-                    setImdbRating(8.6);
+                    setViewerRating(8.6); // Заменено с imdbRating
                 }},
 
                 // === ДОПОЛНИТЕЛЬНЫЕ ===
@@ -360,7 +360,7 @@ public class MovieConfig {
                     setGraphics("Эпическая");
                     setYear(2012);
                     setDirector("Питер Джексон");
-                    setImdbRating(7.8);
+                    setViewerRating(7.8); // Заменено с imdbRating
                 }},
 
                 new Movie() {{
@@ -376,7 +376,7 @@ public class MovieConfig {
                     setGraphics("Волшебная");
                     setYear(2001);
                     setDirector("Крис Коламбус");
-                    setImdbRating(7.6);
+                    setViewerRating(7.6); // Заменено с imdbRating
                 }}
         );
     }

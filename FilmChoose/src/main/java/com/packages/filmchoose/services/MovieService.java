@@ -83,13 +83,13 @@ public class MovieService {
                 }
             }
 
-            // Рейтинг IMDB (важный - 15 баллов)
+            // Оценка зрителей (важный - 15 баллов)
             if (preferences.getMinRating() != null) {
-                if (movie.getImdbRating() >= preferences.getMinRating()) {
+                if (movie.getViewerRating() >= preferences.getMinRating()) {
                     score += 15;
-                    reasons.add("✓ Высокий рейтинг IMDB");
+                    reasons.add("✓ Высокая оценка зрителей");
                 } else {
-                    reasons.add("~ Рейтинг ниже желаемого");
+                    reasons.add("~ Оценка зрителей ниже желаемой");
                 }
             }
 
@@ -117,6 +117,57 @@ public class MovieService {
                 if (preferences.getSettings().contains(movie.getSetting())) {
                     score += 5;
                     reasons.add("✓ Подходит по сеттингу");
+                }
+            }
+
+            // Хэппи-энд (важный - 10 баллов)
+            if (preferences.getHappyEnding() != null) {
+                if (preferences.getHappyEnding() && movie.getTitle().toLowerCase().contains("хэппи-энд")) {
+                    score += 10;
+                    reasons.add("✓ Фильм с хэппи-эндом");
+                } else if (!preferences.getHappyEnding() && !movie.getTitle().toLowerCase().contains("хэппи-энд")) {
+                    score += 10;
+                    reasons.add("✓ Фильм без хэппи-энда");
+                }
+            }
+
+            // Известные актеры (важный - 8 баллов)
+            if (preferences.getFamousActors() != null) {
+                if (preferences.getFamousActors() && movie.getDirector().equalsIgnoreCase("Стивен Спилберг")) {
+                    score += 8;
+                    reasons.add("✓ Фильм с известными актерами");
+                }
+            }
+
+            // Эпические сцены (важный - 8 баллов)
+            if (preferences.getEpicScenes() != null) {
+                if (preferences.getEpicScenes() && movie.getGraphics().equalsIgnoreCase("Эпическая")) {
+                    score += 8;
+                    reasons.add("✓ Эпические сцены");
+                }
+            }
+
+            // Основано на реальных событиях (важный - 10 баллов)
+            if (preferences.getBasedOnTrueStory() != null) {
+                if (preferences.getBasedOnTrueStory() && movie.getSetting().equalsIgnoreCase("Исторический")) {
+                    score += 10;
+                    reasons.add("✓ Основано на реальных событиях");
+                }
+            }
+
+            // Хорошая музыка (менее важный - 5 баллов)
+            if (preferences.getGoodMusic() != null) {
+                if (preferences.getGoodMusic() && movie.getTitle().toLowerCase().contains("музыка")) {
+                    score += 5;
+                    reasons.add("✓ Хорошая музыка");
+                }
+            }
+
+            // Неожиданные повороты сюжета (важный - 10 баллов)
+            if (preferences.getPlotTwists() != null) {
+                if (preferences.getPlotTwists() && movie.getGenre().equalsIgnoreCase("Триллер")) {
+                    score += 10;
+                    reasons.add("✓ Неожиданные повороты сюжета");
                 }
             }
 
