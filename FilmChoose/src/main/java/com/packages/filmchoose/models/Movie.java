@@ -7,7 +7,7 @@ import java.util.List;
 public class Movie {
     private Integer id;
     private String title;
-    private List<String> platforms;
+//    private List<String> platforms;
     private String genre;
     private String setting;
     private String rating;

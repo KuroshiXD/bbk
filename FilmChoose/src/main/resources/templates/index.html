@@ -1,3 +1,4 @@
+<!-- index.html -->
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="ru">
 <head>
@@ -5,49 +6,409 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Система подбора фильмов</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        }
+        header h1 {
+            font-weight: 700;
+            color: #212529;
+        }
+        header p {
+            font-size: 1rem;
+        }
+        .form-section {
+            padding: 1.5rem;
+            border-left: 5px solid #0d6efd;
+            border-radius: .75rem;
+            background: #fff;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .form-section h4 {
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        .form-check-input:checked {
+            background-color: #0d6efd;
+            border-color: #0d6efd;
+        }
+        .btn-primary {
+            font-size: 1.1rem;
+            font-weight: 600;
+            padding: .75rem;
+            border-radius: .75rem;
+            transition: transform .2s ease, box-shadow .2s ease;
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(13,110,253,.25);
+        }
+        .badge {
+            font-size: 1rem;
+        }
+    </style>
 </head>
 <body class="bg-light">
 
 <div class="container py-4">
     <header class="mb-4">
         <h1 class="h3">🎬 Система подбора фильмов</h1>
-        <p class="text-muted">Ответьте на вопросы о ваших предпочтениях и получите персонализированные рекомендации</p>
+        <p class="text-muted">Ответьте на вопросы — и мы подберём идеальный фильм!</p>
         <a th:href="@{/movies/all}" class="btn btn-outline-secondary btn-sm">К списку всех фильмов</a>
     </header>
 
     <form th:action="@{/movies/recommend}" method="post" th:object="${preferences}" class="bg-white p-4 rounded shadow-sm">
-        <!-- Платформы -->
-        <div class="mb-3">
-            <h5>Платформы для просмотра</h5>
-            <div class="row row-cols-2 row-cols-md-3">
-                <div class="form-check" th:each="platform : ${platforms}">
-                    <input class="form-check-input" type="checkbox" th:field="*{platforms}" th:value="${platform}">
-                    <label class="form-check-label" th:text="${platform}"></label>
+
+        <!-- 🔥 ЖАНРЫ (вопросы да/нет) -->
+        <div class="form-section border-danger">
+            <h4 class="text-danger">🔥 Жанры</h4>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Боевик — нравится ли вам, когда в фильме стреляют, сражаются и много экшена?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesAction}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesAction}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Супергерои — суперсилы и герои в костюмах?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesSuperheroes}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesSuperheroes}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Фэнтези — мир магии, драконов и волшебства?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesFantasy}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesFantasy}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Научная фантастика — будущее, технологии и космос?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesSciFi}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesSciFi}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Драма — глубокие истории про людей и их судьбы?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesDrama}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesDrama}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Комедия — шутки и весёлые ситуации?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesComedy}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesComedy}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Ужасы — страшно и напряжённо?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesHorror}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesHorror}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Романтика — истории о любви и отношениях?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesRomance}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesRomance}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Анимация — мультфильмы?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesAnimation}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesAnimation}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Документальный — реальность, факты и обучение?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesDocumentary}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesDocumentary}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Триллер — неожиданные повороты и напряжение?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesThriller}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesThriller}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Космическая опера — эпические истории про звёзды и космос?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesSpaceOpera}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesSpaceOpera}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Приключения — путешествия и поиск сокровищ?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesAdventure}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{likesAdventure}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 🌍 СЕТТИНГИ -->
+        <div class="form-section border-primary">
+            <h4 class="text-primary">🌍 Миры</h4>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Современный — действие в наше время?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingModern}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingModern}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Фэнтези — действие в волшебном мире с магией?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingFantasy}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingFantasy}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-semibold">Космос — действие происходит в космосе?</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingSpace}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingSpace}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит в мрачных футуристических городах? (Киберпанк)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingCyberpunk}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingCyberpunk}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит в реальных исторических эпохах? (Исторический)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingHistorical}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingHistorical}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит среди природы и животных? (Природа)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingNature}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingNature}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит где важно внутреннее состояние героев? (Психологический)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingPsychological}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingPsychological}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит про мафию и преступления? (Криминальный)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingCrime}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingCrime}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит после глобальной катастрофы? (Постапокалипсис)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingPostApocalypse}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingPostApocalypse}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит в сказочной атмосфере? (Волшебный мир)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingMagicWorld}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingMagicWorld}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Любите ли вы фильмы, где действие происходит с загадками и мистическими явлениями? (Мистика)</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingMystic}" value="true">
+                        <label class="form-check-label">Да</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio" th:field="*{settingMystic}" value="false">
+                        <label class="form-check-label">Нет</label>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- Жанры -->
-        <div class="mb-3">
-            <h5>Любимые жанры</h5>
-            <div class="row row-cols-2 row-cols-md-3">
-                <div class="form-check" th:each="genre : ${genres}">
-                    <input class="form-check-input" type="checkbox" th:field="*{genres}" th:value="${genre}">
-                    <label class="form-check-label" th:text="${genre}"></label>
-                </div>
-            </div>
-        </div>
-
-        <!-- Сеттинги -->
-        <div class="mb-3">
-            <h5>Предпочтительные сеттинги</h5>
-            <div class="row row-cols-2 row-cols-md-3">
-                <div class="form-check" th:each="setting : ${settings}">
-                    <input class="form-check-input" type="checkbox" th:field="*{settings}" th:value="${setting}">
-                    <label class="form-check-label" th:text="${setting}"></label>
-                </div>
-            </div>
-        </div>
+        <!-- ОСТАЛЬНЫЕ ПРЕДПОЧТЕНИЯ (без изменений) -->
 
         <!-- Возрастной рейтинг -->
         <div class="mb-3">
@@ -64,7 +425,7 @@
 
         <!-- Годы -->
         <div class="mb-3">
-            <h5>Годы выпуска</h5>
+            <h5>Годы выпуска (Не обязательно)</h5>
             <div class="row g-2">
                 <div class="col">
                     <label class="form-label">От:</label>
@@ -77,12 +438,22 @@
             </div>
         </div>
 
-        <!-- Минимальная оценка зрителей -->
+        <!-- Минимальная оценка -->
         <div class="mb-3">
-            <h5>Минимальная оценка зрителей</h5>
+            <h5>⭐ Оценка зрителей (минимум)</h5>
+            <p class="text-muted small mb-2">
+                Укажите, насколько фильм должен быть популярен и хорошо принят зрителями:
+                <br>
+                <small>
+                    <strong>5.0</strong> — средний фильм, <strong>7.0</strong> — хороший, <strong>8.5+</strong> — шедевр
+                </small>
+            </p>
             <input type="range" th:field="*{minRating}" min="0" max="10" step="0.1" value="7.0" class="form-range"
                    oninput="document.getElementById('ratingValue').textContent = this.value">
-            <span id="ratingValue" th:text="*{minRating}">7.0</span>
+            <div class="mt-2">
+                <span class="me-2">Минимум:</span>
+                <span id="ratingValue" class="badge bg-success fs-6">7.0</span>
+            </div>
         </div>
 
         <!-- Тип просмотра -->

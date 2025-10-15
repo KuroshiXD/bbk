@@ -1,9 +1,9 @@
+
 package com.packages.filmchoose.services;
 
 import com.packages.filmchoose.models.Movie;
 import com.packages.filmchoose.models.MovieRecommendation;
 import com.packages.filmchoose.models.UserPreferences;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -15,21 +15,9 @@ import java.util.stream.Collectors;
 public class MovieService {
 
     private final List<Movie> moviesDatabase;
-    @Getter
-    private final List<String> availablePlatforms;
-    @Getter
-    private final List<String> availableGenres;
-    @Getter
-    private final List<String> availableSettings;
 
-    public MovieService(List<Movie> moviesDatabase,
-                        List<String> availablePlatforms,
-                        List<String> availableGenres,
-                        List<String> availableSettings) {
+    public MovieService(List<Movie> moviesDatabase) {
         this.moviesDatabase = moviesDatabase;
-        this.availablePlatforms = availablePlatforms;
-        this.availableGenres = availableGenres;
-        this.availableSettings = availableSettings;
     }
 
     public List<MovieRecommendation> findMatchingMovies(UserPreferences preferences) {
@@ -39,30 +27,141 @@ public class MovieService {
             int score = 0;
             List<String> reasons = new ArrayList<>();
 
-            // Платформа (важный критерий - 15 баллов)
-            if (preferences.getPlatforms() != null && !preferences.getPlatforms().isEmpty()) {
-                boolean platformMatch = movie.getPlatforms().stream()
-                        .anyMatch(platform -> preferences.getPlatforms().contains(platform));
-                if (platformMatch) {
-                    score += 15;
-                    reasons.add("✓ Доступно на выбранной платформе");
-                } else {
-                    reasons.add("✗ Недоступно на выбранных платформах");
-                    continue; // Обязательный критерий
-                }
+            // === ПРОВЕРКА ПО ЖАНРАМ (на основе ответов "да/нет") ===
+            boolean genreMatch = false;
+            if (preferences.getLikesAction() != null && preferences.getLikesAction() && movie.getGenre().equals("Боевик")) {
+                score += 20;
+                reasons.add("✓ Нравится экшен — идеально подходит");
+                genreMatch = true;
+            }
+            if (preferences.getLikesSuperheroes() != null && preferences.getLikesSuperheroes() && movie.getGenre().equals("Супергерои")) {
+                score += 20;
+                reasons.add("✓ Любите супергероев — отличный выбор");
+                genreMatch = true;
+            }
+            if (preferences.getLikesFantasy() != null && preferences.getLikesFantasy() && movie.getGenre().equals("Фэнтези")) {
+                score += 20;
+                reasons.add("✓ Нравится магия и драконы — подходит");
+                genreMatch = true;
+            }
+            if (preferences.getLikesSciFi() != null && preferences.getLikesSciFi() && movie.getGenre().equals("Научная фантастика")) {
+                score += 20;
+                reasons.add("✓ Любите технологии и космос — идеально");
+                genreMatch = true;
+            }
+            if (preferences.getLikesDrama() != null && preferences.getLikesDrama() && movie.getGenre().equals("Драма")) {
+                score += 20;
+                reasons.add("✓ Нравятся глубокие истории — подходит");
+                genreMatch = true;
+            }
+            if (preferences.getLikesComedy() != null && preferences.getLikesComedy() && movie.getGenre().equals("Комедия")) {
+                score += 20;
+                reasons.add("✓ Любите шутки — отличный выбор");
+                genreMatch = true;
+            }
+            if (preferences.getLikesHorror() != null && preferences.getLikesHorror() && movie.getGenre().equals("Ужасы")) {
+                score += 20;
+                reasons.add("✓ Нравится напряжение и страх — подходит");
+                genreMatch = true;
+            }
+            if (preferences.getLikesRomance() != null && preferences.getLikesRomance() && movie.getGenre().equals("Романтика")) {
+                score += 20;
+                reasons.add("✓ Любите истории о любви — идеально");
+                genreMatch = true;
+            }
+            if (preferences.getLikesAnimation() != null && preferences.getLikesAnimation() && movie.getGenre().equals("Анимация")) {
+                score += 20;
+                reasons.add("✓ Нравятся мультфильмы — подходит");
+                genreMatch = true;
+            }
+            if (preferences.getLikesDocumentary() != null && preferences.getLikesDocumentary() && movie.getGenre().equals("Документальный")) {
+                score += 20;
+                reasons.add("✓ Любите реальные факты — отлично");
+                genreMatch = true;
+            }
+            if (preferences.getLikesThriller() != null && preferences.getLikesThriller() && movie.getGenre().equals("Триллер")) {
+                score += 20;
+                reasons.add("✓ Нравятся неожиданные повороты — подходит");
+                genreMatch = true;
+            }
+            if (preferences.getLikesSpaceOpera() != null && preferences.getLikesSpaceOpera() && movie.getGenre().equals("Космическая опера")) {
+                score += 20;
+                reasons.add("✓ Любите эпические космические саги — идеально");
+                genreMatch = true;
+            }
+            if (preferences.getLikesAdventure() != null && preferences.getLikesAdventure() && movie.getGenre().equals("Приключения")) {
+                score += 20;
+                reasons.add("✓ Нравятся путешествия и сокровища — подходит");
+                genreMatch = true;
             }
 
-            // Жанр (очень важный - 20 баллов)
-            if (preferences.getGenres() != null && !preferences.getGenres().isEmpty()) {
-                if (preferences.getGenres().contains(movie.getGenre())) {
-                    score += 20;
-                    reasons.add("✓ Идеально по жанру");
-                } else {
-                    reasons.add("✗ Не подходит по жанру");
-                }
+            if (!genreMatch && (anyGenreSelected(preferences))) {
+                reasons.add("✗ Не совпадает с выбранными жанрами");
             }
 
-            // Рейтинг (важный - 12 баллов)
+            // === ПРОВЕРКА ПО СЕТТИНГУ ===
+            boolean settingMatch = false;
+            if (preferences.getSettingModern() != null && preferences.getSettingModern() && movie.getSetting().equals("Современный")) {
+                score += 5;
+                reasons.add("✓ Действие в наше время — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingFantasy() != null && preferences.getSettingFantasy() && movie.getSetting().equals("Фэнтези")) {
+                score += 5;
+                reasons.add("✓ Волшебный мир — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingSpace() != null && preferences.getSettingSpace() && movie.getSetting().equals("Космос")) {
+                score += 5;
+                reasons.add("✓ Действие в космосе — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingCyberpunk() != null && preferences.getSettingCyberpunk() && movie.getSetting().equals("Киберпанк")) {
+                score += 5;
+                reasons.add("✓ Мрачный футуризм — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingHistorical() != null && preferences.getSettingHistorical() && movie.getSetting().equals("Исторический")) {
+                score += 5;
+                reasons.add("✓ Реальные исторические события — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingNature() != null && preferences.getSettingNature() && movie.getSetting().equals("Природа")) {
+                score += 5;
+                reasons.add("✓ Действие среди природы — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingPsychological() != null && preferences.getSettingPsychological() && movie.getSetting().equals("Психологический")) {
+                score += 5;
+                reasons.add("✓ Важна психология героев — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingCrime() != null && preferences.getSettingCrime() && movie.getSetting().equals("Криминальный")) {
+                score += 5;
+                reasons.add("✓ Мафия и преступления — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingPostApocalypse() != null && preferences.getSettingPostApocalypse() && movie.getSetting().equals("Постапокалипсис")) {
+                score += 5;
+                reasons.add("✓ Выживание после катастрофы — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingMagicWorld() != null && preferences.getSettingMagicWorld() && movie.getSetting().equals("Волшебный мир")) {
+                score += 5;
+                reasons.add("✓ Сказочная атмосфера — подходит");
+                settingMatch = true;
+            }
+            if (preferences.getSettingMystic() != null && preferences.getSettingMystic() && movie.getSetting().equals("Мистика")) {
+                score += 5;
+                reasons.add("✓ Загадки и тайны — подходит");
+                settingMatch = true;
+            }
+
+            if (!settingMatch && (anySettingSelected(preferences))) {
+                reasons.add("~ Не совпадает с выбранными сеттингами");
+            }
+
+            // Возрастной рейтинг
             if (preferences.getRating() != null) {
                 if (movie.getRating().equals(preferences.getRating())) {
                     score += 12;
@@ -72,7 +171,7 @@ public class MovieService {
                 }
             }
 
-            // Год выпуска (важный - 10 баллов)
+            // Год выпуска
             if (preferences.getMinYear() != null && preferences.getMaxYear() != null) {
                 if (movie.getYear() >= preferences.getMinYear() &&
                         movie.getYear() <= preferences.getMaxYear()) {
@@ -83,7 +182,7 @@ public class MovieService {
                 }
             }
 
-            // Оценка зрителей (важный - 15 баллов)
+            // Оценка зрителей
             if (preferences.getMinRating() != null) {
                 if (movie.getViewerRating() >= preferences.getMinRating()) {
                     score += 15;
@@ -93,7 +192,7 @@ public class MovieService {
                 }
             }
 
-            // Тип просмотра (важный - 8 баллов)
+            // Тип просмотра
             if (preferences.getMovieTypes() != null && !preferences.getMovieTypes().isEmpty()) {
                 boolean typeMatch = movie.getMovieType().stream()
                         .anyMatch(type -> preferences.getMovieTypes().contains(type));
@@ -105,70 +204,11 @@ public class MovieService {
                 }
             }
 
-            // Длительность (менее важный - 5 баллов)
+            // Длительность
             if (preferences.getDuration() != null &&
                     preferences.getDuration().equals(movie.getDuration())) {
                 score += 5;
                 reasons.add("✓ Подходит по длительности");
-            }
-
-            // Сеттинг (менее важный - 5 баллов)
-            if (preferences.getSettings() != null && !preferences.getSettings().isEmpty()) {
-                if (preferences.getSettings().contains(movie.getSetting())) {
-                    score += 5;
-                    reasons.add("✓ Подходит по сеттингу");
-                }
-            }
-
-            // Хэппи-энд (важный - 10 баллов)
-            if (preferences.getHappyEnding() != null) {
-                if (preferences.getHappyEnding() && movie.getTitle().toLowerCase().contains("хэппи-энд")) {
-                    score += 10;
-                    reasons.add("✓ Фильм с хэппи-эндом");
-                } else if (!preferences.getHappyEnding() && !movie.getTitle().toLowerCase().contains("хэппи-энд")) {
-                    score += 10;
-                    reasons.add("✓ Фильм без хэппи-энда");
-                }
-            }
-
-            // Известные актеры (важный - 8 баллов)
-            if (preferences.getFamousActors() != null) {
-                if (preferences.getFamousActors() && movie.getDirector().equalsIgnoreCase("Стивен Спилберг")) {
-                    score += 8;
-                    reasons.add("✓ Фильм с известными актерами");
-                }
-            }
-
-            // Эпические сцены (важный - 8 баллов)
-            if (preferences.getEpicScenes() != null) {
-                if (preferences.getEpicScenes() && movie.getGraphics().equalsIgnoreCase("Эпическая")) {
-                    score += 8;
-                    reasons.add("✓ Эпические сцены");
-                }
-            }
-
-            // Основано на реальных событиях (важный - 10 баллов)
-            if (preferences.getBasedOnTrueStory() != null) {
-                if (preferences.getBasedOnTrueStory() && movie.getSetting().equalsIgnoreCase("Исторический")) {
-                    score += 10;
-                    reasons.add("✓ Основано на реальных событиях");
-                }
-            }
-
-            // Хорошая музыка (менее важный - 5 баллов)
-            if (preferences.getGoodMusic() != null) {
-                if (preferences.getGoodMusic() && movie.getTitle().toLowerCase().contains("музыка")) {
-                    score += 5;
-                    reasons.add("✓ Хорошая музыка");
-                }
-            }
-
-            // Неожиданные повороты сюжета (важный - 10 баллов)
-            if (preferences.getPlotTwists() != null) {
-                if (preferences.getPlotTwists() && movie.getGenre().equalsIgnoreCase("Триллер")) {
-                    score += 10;
-                    reasons.add("✓ Неожиданные повороты сюжета");
-                }
             }
 
             scoredMovies.add(new MovieRecommendation(movie, score, reasons));
@@ -177,6 +217,36 @@ public class MovieService {
         return scoredMovies.stream()
                 .sorted(Comparator.comparingInt(MovieRecommendation::getScore).reversed())
                 .collect(Collectors.toList());
+    }
+
+    private boolean anyGenreSelected(UserPreferences p) {
+        return (p.getLikesAction() != null && p.getLikesAction()) ||
+                (p.getLikesSuperheroes() != null && p.getLikesSuperheroes()) ||
+                (p.getLikesFantasy() != null && p.getLikesFantasy()) ||
+                (p.getLikesSciFi() != null && p.getLikesSciFi()) ||
+                (p.getLikesDrama() != null && p.getLikesDrama()) ||
+                (p.getLikesComedy() != null && p.getLikesComedy()) ||
+                (p.getLikesHorror() != null && p.getLikesHorror()) ||
+                (p.getLikesRomance() != null && p.getLikesRomance()) ||
+                (p.getLikesAnimation() != null && p.getLikesAnimation()) ||
+                (p.getLikesDocumentary() != null && p.getLikesDocumentary()) ||
+                (p.getLikesThriller() != null && p.getLikesThriller()) ||
+                (p.getLikesSpaceOpera() != null && p.getLikesSpaceOpera()) ||
+                (p.getLikesAdventure() != null && p.getLikesAdventure());
+    }
+
+    private boolean anySettingSelected(UserPreferences p) {
+        return (p.getSettingModern() != null && p.getSettingModern()) ||
+                (p.getSettingFantasy() != null && p.getSettingFantasy()) ||
+                (p.getSettingSpace() != null && p.getSettingSpace()) ||
+                (p.getSettingCyberpunk() != null && p.getSettingCyberpunk()) ||
+                (p.getSettingHistorical() != null && p.getSettingHistorical()) ||
+                (p.getSettingNature() != null && p.getSettingNature()) ||
+                (p.getSettingPsychological() != null && p.getSettingPsychological()) ||
+                (p.getSettingCrime() != null && p.getSettingCrime()) ||
+                (p.getSettingPostApocalypse() != null && p.getSettingPostApocalypse()) ||
+                (p.getSettingMagicWorld() != null && p.getSettingMagicWorld()) ||
+                (p.getSettingMystic() != null && p.getSettingMystic());
     }
 
     public List<Movie> getAllMovies() {

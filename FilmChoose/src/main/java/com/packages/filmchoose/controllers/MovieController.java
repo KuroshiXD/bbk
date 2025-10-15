@@ -1,3 +1,4 @@
+// MovieController.java
 package com.packages.filmchoose.controllers;
 
 import com.packages.filmchoose.models.MovieRecommendation;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
 import java.util.List;
 
 @Controller
@@ -24,9 +26,6 @@ public class MovieController {
     @GetMapping
     public String showForm(Model model) {
         model.addAttribute("preferences", new UserPreferences());
-        model.addAttribute("platforms", movieService.getAvailablePlatforms());
-        model.addAttribute("genres", movieService.getAvailableGenres());
-        model.addAttribute("settings", movieService.getAvailableSettings());
         return "index";
     }
 
