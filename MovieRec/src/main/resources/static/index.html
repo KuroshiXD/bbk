@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎬 Подбор фильмов</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .card {
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .btn-rating {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin: 5px;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        .btn-rating:hover {
+            transform: scale(1.1);
+        }
+        .btn-rating.active {
+            background: #4CAF50;
+            color: white;
+            border-color: #4CAF50;
+        }
+        .progress {
+            height: 10px;
+            border-radius: 5px;
+        }
+        .movie-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            transition: all 0.3s;
+            border-left: 5px solid transparent;
+        }
+        .movie-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        .movie-item.best-choice {
+            border-left-color: #4CAF50;
+            background: #f0f9ff;
+        }
+        .rating-scale {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        .rating-label {
+            font-size: 0.8rem;
+            color: #666;
+        }
+        .movie-rank {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
+            text-align: center;
+            background: #667eea;
+            color: white;
+            border-radius: 50%;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        .movie-rank-1 { background: #FFD700; }
+        .movie-rank-2 { background: #C0C0C0; }
+        .movie-rank-3 { background: #CD7F32; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- Стартовый экран -->
+    <div id="startScreen" class="card p-5 text-center mt-5">
+        <h1 class="mb-4">🎬 Система подбора фильмов</h1>
+        <p class="lead mb-4">Система использует байесовскую сеть для анализа ваших предпочтений</p>
+        <p class="text-muted mb-4">Ответьте на вопросы (шкала 1-5), ИИ подберет идеальный фильм</p>
+        <button id="startBtn" class="btn btn-primary btn-lg">
+            <i class="bi bi-play-circle me-2"></i>Начать подбор
+        </button>
+
+        <div class="mt-5 text-start">
+            <h5>Как работает система:</h5>
+            <ul class="text-muted">
+                <li>Вопросы сгруппированы (жанры, настроение, время и т.д.)</li>
+                <li>Внутри групп вопросы взаимоисключающие</li>
+                <li>Система пересчитывает вероятности после каждого ответа</li>
+                <li>Рекомендация основана на всех ответах</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Экран викторины -->
+    <div id="quizScreen" class="card p-4 mt-4 d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h4 class="mb-0">
+                <i class="bi bi-question-circle me-2"></i>
+                Вопрос <span id="questionNumber">1</span>
+            </h4>
+            <div class="text-end">
+                <div id="progressPercent" class="fw-bold">0%</div>
+                <small class="text-muted">прогресс</small>
+            </div>
+        </div>
+
+        <!-- Прогресс вопросов -->
+        <div class="mb-4">
+            <div class="d-flex justify-content-between mb-1">
+                <small>Вопросы:</small>
+                <small><span id="answeredQuestions">0</span>/<span id="totalQuestions">18</span></small>
+            </div>
+            <div class="progress">
+                <div id="questionBar" class="progress-bar bg-info" style="width: 0%"></div>
+            </div>
+        </div>
+
+        <h5 id="questionText" class="text-center mb-4 p-3 bg-light rounded">Загрузка вопроса...</h5>
+
+        <div class="text-center mb-4">
+            <div class="rating-scale">
+                <span class="rating-label">Совсем не важно</span>
+                <span class="rating-label">Очень важно</span>
+            </div>
+            <div class="mb-3">
+                <button class="btn btn-outline-primary btn-rating" data-rating="1">1</button>
+                <button class="btn btn-outline-primary btn-rating" data-rating="2">2</button>
+                <button class="btn btn-outline-primary btn-rating" data-rating="3">3</button>
+                <button class="btn btn-outline-primary btn-rating" data-rating="4">4</button>
+                <button class="btn btn-outline-primary btn-rating" data-rating="5">5</button>
+            </div>
+            <div class="rating-scale">
+                <span class="rating-label">Не нравится</span>
+                <span class="rating-label">Очень нравится</span>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between mt-3">
+            <button id="backBtn" class="btn btn-outline-secondary" disabled>
+                <i class="bi bi-arrow-left"></i> Назад
+            </button>
+            <div>
+                <button id="skipBtn" class="btn btn-outline-warning me-2">
+                    Пропустить
+                </button>
+                <button id="nextBtn" class="btn btn-primary" disabled>
+                    Ответить <i class="bi bi-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Индикатор работы -->
+        <div id="loadingIndicator" class="text-center mt-3 d-none">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Загрузка...</span>
+            </div>
+            <small class="text-muted ms-2">Анализируем ответ...</small>
+        </div>
+    </div>
+
+    <!-- Экран результатов -->
+    <div id="resultScreen" class="card p-4 mt-4 d-none">
+        <h3 class="text-center mb-4">🎉 Ваша рекомендация</h3>
+
+        <div id="resultContent" class="text-center mb-4">
+            <!-- Результат будет здесь -->
+        </div>
+
+        <h5 class="mt-4">Топ 10 рекомендаций:</h5>
+        <div id="allMovies" class="mb-4">
+            <!-- Список фильмов -->
+        </div>
+
+        <div class="d-grid gap-2">
+            <button id="restartBtn" class="btn btn-warning">
+                <i class="bi bi-arrow-repeat me-2"></i>Начать заново
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    class MovieRecommender {
+        constructor() {
+            this.baseUrl = 'http://localhost:8080/api/movies';
+            this.answers = [];
+            this.currentStep = 0;
+            this.totalQuestions = 18;
+            this.init();
+        }
+
+        init() {
+            document.getElementById('startBtn').addEventListener('click', () => this.startQuiz());
+            document.querySelectorAll('.btn-rating').forEach(btn => {
+                btn.addEventListener('click', (e) => this.selectRating(e.target.dataset.rating));
+            });
+            document.getElementById('nextBtn').addEventListener('click', () => this.submitAnswer());
+            document.getElementById('skipBtn').addEventListener('click', () => this.skipQuestion());
+            document.getElementById('restartBtn').addEventListener('click', () => this.restart());
+        }
+
+        async startQuiz() {
+            try {
+                this.showLoading(true);
+                await fetch(`${this.baseUrl}/start`, { method: 'POST' });
+                await this.getNextQuestion();
+                this.showScreen('quizScreen');
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Не удалось начать викторину');
+            } finally {
+                this.showLoading(false);
+            }
+        }
+
+        async getNextQuestion() {
+            try {
+                const response = await fetch(`${this.baseUrl}/next`);
+                const data = await response.json();
+
+                if (data.finished) {
+                    this.showResult(data);
+                    return;
+                }
+
+                this.currentQuestion = data;
+                this.currentStep = data.questionNumber || 1;
+
+                // Обновляем вопрос
+                document.getElementById('questionText').textContent = data.question;
+                document.getElementById('questionNumber').textContent = this.currentStep;
+
+                // Обновляем прогресс
+                const progress = data.progress || 0;
+                document.getElementById('progressPercent').textContent = `${Math.round(progress)}%`;
+                document.getElementById('questionBar').style.width = `${progress}%`;
+
+                // Обновляем счетчики вопросов
+                document.getElementById('answeredQuestions').textContent = data.answeredQuestions || 0;
+                document.getElementById('totalQuestions').textContent = data.totalQuestions || this.totalQuestions;
+
+                this.resetRatingButtons();
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+            }
+        }
+
+        selectRating(rating) {
+            this.resetRatingButtons();
+            const btn = document.querySelector(`.btn-rating[data-rating="${rating}"]`);
+            btn.classList.remove('btn-outline-primary');
+            btn.classList.add('active');
+            this.selectedRating = rating;
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        resetRatingButtons() {
+            document.querySelectorAll('.btn-rating').forEach(btn => {
+                btn.classList.remove('active');
+                btn.classList.add('btn-outline-primary');
+            });
+            this.selectedRating = null;
+            document.getElementById('nextBtn').disabled = true;
+        }
+
+        async submitAnswer() {
+            if (!this.selectedRating) return;
+
+            try {
+                this.showLoading(true);
+
+                const response = await fetch(`${this.baseUrl}/answer`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        evidenceId: this.currentQuestion.evidenceId,
+                        rating: parseInt(this.selectedRating)
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.finished) {
+                    this.showResult(data);
+                } else {
+                    await this.getNextQuestion();
+                }
+
+            } catch (error) {
+                console.error('Ошибка:', error);
+                alert('Не удалось отправить ответ');
+            } finally {
+                this.showLoading(false);
+            }
+        }
+
+        async skipQuestion() {
+            this.selectedRating = 3; // Нейтральный ответ
+            await this.submitAnswer();
+        }
+
+        async showResult(data) {
+            this.showScreen('resultScreen');
+
+            const resultContent = document.getElementById('resultContent');
+
+            resultContent.innerHTML = `
+                <div class="card border-success mb-3">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="mb-0">🎬 ${data.movie || 'Фильм не найден'}</h4>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">${data.conclusion || 'Рекомендация'}</p>
+                        <div class="mt-3">
+                            <p><strong>Отвечено вопросов:</strong> ${data.totalAnswered || 0} из ${data.totalQuestions || 18}</p>
+                            ${data.movieInfo ? `
+                                <div class="mt-2 text-muted">
+                                    <small>
+                                        <strong>${data.movieInfo.genre || ''}</strong> •
+                                        ${data.movieInfo.year || ''} •
+                                        ${data.movieInfo.rating || ''}
+                                    </small>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            await this.loadTopMovies();
+        }
+
+        async loadTopMovies() {
+            try {
+                const response = await fetch(`${this.baseUrl}/all`);
+                const data = await response.json();
+
+                const container = document.getElementById('allMovies');
+                container.innerHTML = '';
+
+                if (data.movies && data.movies.length > 0) {
+                    // Берем топ 10 фильмов
+                    const topMovies = data.movies.slice(0, 10);
+
+                    topMovies.forEach((movie, index) => {
+                        const movieEl = document.createElement('div');
+                        movieEl.className = `movie-item ${index === 0 ? 'best-choice' : ''}`;
+
+                        const rankClass = `movie-rank movie-rank-${index + 1}`;
+
+                        movieEl.innerHTML = `
+                            <div class="d-flex align-items-center">
+                                <div class="${rankClass}">${index + 1}</div>
+                                <div style="flex: 1;">
+                                    <strong>${movie.name}</strong>
+                                    <br>
+                                    <small class="text-muted">${movie.info?.description || ''}</small>
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(movieEl);
+                    });
+                }
+
+            } catch (error) {
+                console.error('Ошибка загрузки фильмов:', error);
+            }
+        }
+
+        restart() {
+            this.answers = [];
+            this.currentStep = 0;
+            this.selectedRating = null;
+            this.showScreen('startScreen');
+        }
+
+        showScreen(screenId) {
+            ['startScreen', 'quizScreen', 'resultScreen'].forEach(id => {
+                document.getElementById(id).classList.add('d-none');
+            });
+            document.getElementById(screenId).classList.remove('d-none');
+        }
+
+        showLoading(show) {
+            const indicator = document.getElementById('loadingIndicator');
+            const nextBtn = document.getElementById('nextBtn');
+
+            if (show) {
+                indicator.classList.remove('d-none');
+                nextBtn.disabled = true;
+                document.querySelectorAll('.btn-rating').forEach(btn => {
+                    btn.disabled = true;
+                });
+            } else {
+                indicator.classList.add('d-none');
+                document.querySelectorAll('.btn-rating').forEach(btn => {
+                    btn.disabled = false;
+                });
+            }
+        }
+    }
+
+    // Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', () => {
+        new MovieRecommender();
+    });
+</script>
+</body>
+</html>
